@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yasso - Achetez, vendez, échangez</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            primary: '#2E5090',    // YInMn Blue
+                            dark: '#1E3A6F',       // Darker shade
+                            light: '#E8EEF7'       // Light tint
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        .like-btn.active {
+            color: #ef4444;
+            transform: scale(1.2);
+        }
+        .category-pill {
+            transition: all 0.3s ease;
+        }
+        .category-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(46, 80, 144, 0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2E5090 0%, #1E3A6F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(46, 80, 144, 0.1) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .slogan-text {
+            font-style: italic;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-gray-100 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="text-3xl font-bold gradient-text tracking-tight">YASSO</div>
+                </div>
+
+                <!-- Slogan (Desktop) -->
+                <div class="hidden lg:flex flex-1 justify-center">
+                    <p class="text-brand-primary font-medium slogan-text text-sm tracking-wider">Votre rêve est une présence visible</p>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-xl mx-4">
+                    <div class="relative w-full">
+                        <input type="text" 
+                               id="searchInput"
+                               placeholder="Rechercher des articles, marques, styles..." 
+                               class="w-full pl-12 pr-4 py-2.5 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-light transition-all duration-300 outline-none">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Right Menu -->
+                <div class="flex items-center space-x-4">
+                    <button class="hidden md:flex items-center space-x-2 text-gray-700 hover:text-brand-primary transition-colors">
+                        <i class="fas fa-comment-dots text-xl"></i>
+                        <span class="text-sm font-medium">Messages</span>
+                    </button>
+                    
+                    <button class="relative p-2 text-gray-700 hover:text-brand-primary transition-colors" onclick="toggleNotifications()">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 h-4 w-4 bg-brand-primary rounded-full text-xs text-white flex items-center justify-center">3</span>
+                    </button>
+
+                    <button class="hidden md:flex items-center space-x-2 bg-brand-primary text-white px-6 py-2.5 rounded-full hover:bg-brand-dark transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-plus"></i>
+                        <span class="font-medium">Vends tes articles</span>
+                    </button>
+
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Profile" class="h-8 w-8 rounded-full object-cover border-2 border-brand-primary">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slogan (Mobile) -->
+            <div class="md:hidden pb-2 text-center">
+                <p class="text-brand-primary font-medium slogan-text text-xs tracking-wider">Votre rêve est une présence visible</p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-24 pb-12 bg-white hero-pattern relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent z-10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 animate-slide-up">
+                    <!-- Slogan in Hero -->
+                    <div class="inline-block px-4 py-2 bg-brand-light rounded-full mb-2">
+                        <p class="text-brand-primary font-semibold slogan-text text-sm">✨ Votre rêve est une présence visible</p>
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                        Vends et déniche des <span class="gradient-text">pépites</span> de seconde main
+                    </h1>
+                    <p class="text-xl text-gray-600 max-w-lg">
+                        Rejoins la communauté Yasso de mode circulaire. Des millions d'articles uniques t'attendent à prix mini.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="bg-brand-primary text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-brand-dark transition-all duration-300 transform hover:scale-105 shadow-xl">
+                            Explorer les articles
+                        </button>
+                        <button class="bg-white text-gray-800 border-2 border-gray-200 px-8 py-4 rounded-full text-lg font-semibold hover:border-brand-primary hover:text-brand-primary transition-all duration-300">
+                            Comment ça marche ?
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4 pt-4">
+                        <div class="flex -space-x-2">
+                            <img class="w-10 h-10 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="">
+                            <img class="w-10 h-10 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="">
+                            <img class="w-10 h-10 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="">
+                        </div>
+                        <p class="text-sm text-gray-600"><span class="font-bold text-gray-900">+2M</span> membres actifs</p>
+                    </div>
+                </div>
+                <div class="relative hidden lg:block">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-light rounded-full filter blur-3xl opacity-50 animate-pulse"></div>
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop" 
+                         alt="Fashion" 
+                         class="relative z-10 rounded-3xl shadow-2xl transform rotate-3 hover:rotate-0 transition-all duration-500 animate-float object-cover h-[600px] w-full">
+                    
+                    <!-- Floating Cards -->
+                    <div class="absolute -left-12 top-20 bg-white p-4 rounded-2xl shadow-xl z-20 animate-float" style="animation-delay: 0.5s;">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-brand-light rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-brand-primary"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900">Article vendu !</p>
+                                <p class="text-sm text-gray-500">Il y a 2 min</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="sticky top-16 z-40 bg-white border-b border-gray-100 py-4 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide" id="categoryContainer">
+                <!-- Categories injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Sort -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-2 overflow-x-auto">
+                <button class="filter-btn active px-4 py-2 rounded-full border border-gray-200 bg-brand-primary text-white text-sm font-medium transition-all" data-filter="all">
+                    Tout
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full border border-gray-200 hover:border-brand-primary hover:text-brand-primary text-sm font-medium transition-all" data-filter="femme">
+                    Femme
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full border border-gray-200 hover:border-brand-primary hover:text-brand-primary text-sm font-medium transition-all" data-filter="homme">
+                    Homme
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full border border-gray-200 hover:border-brand-primary hover:text-brand-primary text-sm font-medium transition-all" data-filter="enfant">
+                    Enfant
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full border border-gray-200 hover:border-brand-primary hover:text-brand-primary text-sm font-medium transition-all" data-filter="maison">
+                    Maison
+                </button>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <select id="sortSelect" class="px-4 py-2 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-primary cursor-pointer">
+                    <option value="recent">Plus récents</option>
+                    <option value="price-asc">Prix croissant</option>
+                    <option value="price-desc">Prix décroissant</option>
+                    <option value="popular">Popularité</option>
+                </select>
+                <button class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors" onclick="toggleView()">
+                    <i class="fas fa-th-large text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            <!-- Products injected by JS -->
+        </div>
+        
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden py-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    <div class="relative h-96 md:h-full bg-gray-100">
+                        <img id="modalImage" src="" alt="" class="w-full h-full object-cover">
+                        <button onclick="closeModal()" class="absolute top-4 left-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-arrow-left text-gray-800"></i>
+                        </button>
+                    </div>
+                    <div class="p-8 space-y-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover">
+                                    <span id="modalSeller" class="text-sm font-medium text-gray-600"></span>
+                                    <span class="text-xs bg-brand-light text-brand-primary px-2 py-0.5 rounded-full font-semibold">Top vendeur</span>
+                                </div>
+                                <h2 id="modalTitle" class="text-2xl font-bold text-gray-900"></h2>
+                            </div>
+                            <button class="like-btn p-2 rounded-full hover:bg-gray-100 transition-colors" onclick="toggleLike(this)">
+                                <i class="far fa-heart text-2xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-baseline space-x-2">
+                            <span id="modalPrice" class="text-3xl font-bold text-gray-900"></span>
+                            <span class="text-gray-500 line-through" id="modalOriginalPrice"></span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <i class="fas fa-ruler text-brand-primary"></i>
+                                <span id="modalSize"></span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <i class="fas fa-tag text-brand-primary"></i>
+                                <span id="modalBrand"></span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <i class="fas fa-info-circle text-brand-primary"></i>
+                                <span id="modalCondition"></span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4">
+                            <h3 class="font-semibold text-gray-900 mb-2">Description</h3>
+                            <p id="modalDescription" class="text-gray-600 text-sm leading-relaxed"></p>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4">
+                            <button class="flex-1 bg-brand-primary text-white py-3 rounded-full font-semibold hover:bg-brand-dark transition-colors shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
+                                Acheter
+                            </button>
+                            <button class="flex-1 border-2 border-gray-200 text-gray-800 py-3 rounded-full font-semibold hover:border-brand-primary hover:text-brand-primary transition-colors">
+                                Faire une offre
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-100">
+                            <span><i class="fas fa-shield-alt mr-1 text-brand-primary"></i> Paiement sécurisé</span>
+                            <span><i class="fas fa-undo mr-1 text-brand-primary"></i> Retours sous 2 jours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-brand-primary text-white rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform">
+        <i class="fas fa-plus text-xl"></i>
+    </button>
+
+    <script>
+        // Data
+        const categories = [
+            { name: 'Tout', icon: 'fa-th-large' },
+            { name: 'Vêtements', icon: 'fa-tshirt' },
+            { name: 'Chaussures', icon: 'fa-shoe-prints' },
+            { name: 'Accessoires', icon: 'fa-bag-shopping' },
+            { name: 'Beauté', icon: 'fa-magic' },
+            { name: 'Maison', icon: 'fa-home' },
+            { name: 'Sport', icon: 'fa-basketball-ball' },
+            { name: 'Luxe', icon: 'fa-gem' },
+            { name: 'Vintage', icon: 'fa-clock' }
+        ];
+
+        const products = [
+            {
+                id: 1,
+                title: "Robe midi fleurie Zara",
+                price: 25,
+                originalPrice: 45,
+                size: "M",
+                brand: "Zara",
+                condition: "Très bon état",
+                category: "femme",
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop",
+                seller: "Marie_D",
+                avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&fit=crop",
+                likes: 12,
+                description: "Magnifique robe portée une seule fois pour un mariage. Tissu fluide et agréable à porter."
+            },
+            {
+                id: 2,
+                title: "Veste en jean Levi's Vintage",
+                price: 45,
+                originalPrice: 120,
+                size: "L",
+                brand: "Levi's",
+                condition: "Bon état",
+                category: "homme",
+                image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&h=500&fit=crop",
+                seller: "Thomas_R",
+                avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&fit=crop",
+                likes: 8,
+                description: "Veste iconique Levi's des années 90. Patine naturelle et authentique."
+            },
+            {
+                id: 3,
+                title: "Sneakers Nike Air Force 1",
+                price: 60,
+                originalPrice: 110,
+                size: "42",
+                brand: "Nike",
+                condition: "Comme neuf",
+                category: "homme",
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop",
+                seller: "Lucas_S",
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&fit=crop",
+                likes: 24,
+                description: "Portées 2 fois seulement. Trop grandes pour moi. Avec boîte d'origine."
+            },
+            {
+                id: 4,
+                title: "Sac à main Coach Cuir",
+                price: 85,
+                originalPrice: 350,
+                size: "Unique",
+                brand: "Coach",
+                condition: "Excellent état",
+                category: "femme",
+                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=500&fit=crop",
+                seller: "Sophie_M",
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&fit=crop",
+                likes: 15,
+                description: "Sac iconique en cuir véritable. Quelques micro-rayures à peine visibles."
+            },
+            {
+                id: 5,
+                title: "Manteau laine Sandro",
+                price: 120,
+                originalPrice: 450,
+                size: "38",
+                brand: "Sandro",
+                condition: "Très bon état",
+                category: "femme",
+                image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=500&fit=crop",
+                seller: "Camille_B",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&fit=crop",
+                likes: 32,
+                description: "Manteau élégant en laine mélangée. Couleur camel intemporelle."
+            },
+            {
+                id: 6,
+                title: "Chemise Ralph Lauren",
+                price: 35,
+                originalPrice: 95,
+                size: "L",
+                brand: "Ralph Lauren",
+                condition: "Neuf avec étiquettes",
+                category: "homme",
+                image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop",
+                seller: "Pierre_K",
+                avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&fit=crop",
+                likes: 6,
+                description: "Jamais portée. Cadeau qui ne correspond pas à ma taille."
+            },
+            {
+                id: 7,
+                title: "Robe enfant Jacadi 6 ans",
+                price: 18,
+                originalPrice: 55,
+                size: "6 ans",
+                brand: "Jacadi",
+                condition: "Bon état",
+                category: "enfant",
+                image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=400&h=500&fit=crop",
+                seller: "Emma_P",
+                avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&fit=crop",
+                likes: 4,
+                description: "Robe d'été parfaite pour les occasions spéciales. Lavée et repassée."
+            },
+            {
+                id: 8,
+                title: "Lampe vintage années 70",
+                price: 55,
+                originalPrice: 120,
+                size: "H: 45cm",
+                brand: "Vintage",
+                condition: "Bon état",
+                category: "maison",
+                image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=500&fit=crop",
+                seller: "Julie_A",
+                avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&fit=crop",
+                likes: 19,
+                description: "Lampe de chevet design vintage. Fonctionne parfaitement, câble neuf."
+            },
+            {
+                id: 9,
+                title: "Blazer oversize H&M",
+                price: 22,
+                originalPrice: 49,
+                size: "40",
+                brand: "H&M",
+                condition: "Très bon état",
+                category: "femme",
+                image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=500&fit=crop",
+                seller: "Lola_V",
+                avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=100&fit=crop",
+                likes: 11,
+                description: "Blazer tendance coupe oversize. Parfait pour un look working girl."
+            },
+            {
+                id: 10,
+                title: "Baskets Adidas Stan Smith",
+                price: 40,
+                originalPrice: 100,
+                size: "41",
+                brand: "Adidas",
+                condition: "Bon état",
+                category: "homme",
+                image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=500&fit=crop",
+                seller: "Nicolas_D",
+                avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=100&fit=crop",
+                likes: 14,
+                description: "Classiques indémodables. Nettoyées et désinfectées."
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentSort = 'recent';
+        let likedProducts = new Set();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderProducts();
+            setupEventListeners();
+        });
+
+        function renderCategories() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = categories.map((cat, index) => `
+                <button class="category-pill flex items-center space-x-2 px-6 py-2.5 rounded-full border ${index === 0 ? 'bg-brand-primary text-white border-brand-primary' : 'bg-white text-gray-700 border-gray-200 hover:border-brand-primary hover:text-brand-primary'} whitespace-nowrap transition-all" onclick="selectCategory(this, '${cat.name}')">
+                    <i class="fas ${cat.icon}"></i>
+                    <span class="font-medium">${cat.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            let filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+            
+            // Sort
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'popular') {
+                filtered.sort((a, b) => b.likes - a.likes);
+            }
+
+            grid.innerHTML = filtered.map((product, index) => `
+                <div class="product-card group cursor-pointer animate-fade-in" style="animation-delay: ${index * 0.05}s" onclick="openModal(${product.id})">
+                    <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 mb-3">
+                        <img src="${product.image}" alt="${product.title}" class="product-image w-full h-full object-cover transition-transform duration-500">
+                        <button class="like-btn absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10 ${likedProducts.has(product.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleLikeProduct(${product.id}, this)">
+                            <i class="${likedProducts.has(product.id) ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-white text-xs font-medium">${product.size} • ${product.condition}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-start justify-between">
+                            <h3 class="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-brand-primary transition-colors">${product.title}</h3>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="text-lg font-bold text-gray-900">${product.price}€</span>
+                            <span class="text-xs text-gray-400 line-through">${product.originalPrice}€</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <img src="${product.avatar}" class="w-5 h-5 rounded-full object-cover">
+                            <span class="text-xs text-gray-500">${product.seller}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupEventListeners() {
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('bg-brand-primary', 'text-white');
+                        b.classList.add('hover:border-brand-primary', 'hover:text-brand-primary');
+                    });
+                    e.target.classList.add('bg-brand-primary', 'text-white');
+                    e.target.classList.remove('hover:border-brand-primary', 'hover:text-brand-primary');
+                    currentFilter = e.target.dataset.filter;
+                    renderProducts();
+                });
+            });
+
+            // Sort select
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderProducts();
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                if (term.length > 0) {
+                    const filtered = products.filter(p => 
+                        p.title.toLowerCase().includes(term) || 
+                        p.brand.toLowerCase().includes(term)
+                    );
+                    renderFilteredProducts(filtered);
+                } else {
+                    renderProducts();
+                }
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('shadow-md');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                }
+            });
+        }
+
+        function renderFilteredProducts(filtered) {
+            const grid = document.getElementById('productsGrid');
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Aucun article trouvé</p>
+                    </div>
+                `;
+                return;
+            }
+            grid.innerHTML = filtered.map((product, index) => `
+                <div class="product-card group cursor-pointer animate-fade-in" onclick="openModal(${product.id})">
+                    <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 mb-3">
+                        <img src="${product.image}" alt="${product.title}" class="product-image w-full h-full object-cover transition-transform duration-500">
+                        <button class="like-btn absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10 ${likedProducts.has(product.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleLikeProduct(${product.id}, this)">
+                            <i class="${likedProducts.has(product.id) ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-white text-xs font-medium">${product.size} • ${product.condition}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-start justify-between">
+                            <h3 class="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-brand-primary transition-colors">${product.title}</h3>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="text-lg font-bold text-gray-900">${product.price}€</span>
+                            <span class="text-xs text-gray-400 line-through">${product.originalPrice}€</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <img src="${product.avatar}" class="w-5 h-5 rounded-full object-cover">
+                            <span class="text-xs text-gray-500">${product.seller}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(btn, category) {
+            // Reset all categories
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.classList.remove('bg-brand-primary', 'text-white', 'border-brand-primary');
+                pill.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
+            });
+            
+            // Set active
+            btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
+            btn.classList.add('bg-brand-primary', 'text-white', 'border-brand-primary');
+        }
+
+        function openModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('modalImage').src = product.image;
+            document.getElementById('modalTitle').textContent = product.title;
+            document.getElementById('modalPrice').textContent = product.price + '€';
+            document.getElementById('modalOriginalPrice').textContent = product.originalPrice + '€';
+            document.getElementById('modalSize').textContent = product.size;
+            document.getElementById('modalBrand').textContent = product.brand;
+            document.getElementById('modalCondition').textContent = product.condition;
+            document.getElementById('modalDescription').textContent = product.description;
+            document.getElementById('modalSeller').textContent = product.seller;
+            document.getElementById('modalAvatar').src = product.avatar;
+
+            document.getElementById('productModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('active');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('active')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }
+
+        function toggleLikeProduct(productId, btn) {
+            if (likedProducts.has(productId)) {
+                likedProducts.delete(productId);
+                btn.classList.remove('active');
+                btn.querySelector('i').classList.remove('fas');
+                btn.querySelector('i').classList.add('far');
+            } else {
+                likedProducts.add(productId);
+                btn.classList.add('active');
+                btn.querySelector('i').classList.remove('far');
+                btn.querySelector('i').classList.add('fas');
+            }
+        }
+
+        function toggleNotifications() {
+            alert('Notifications - Fonctionnalité à venir !');
+        }
+
+        function toggleView() {
+            const grid = document.getElementById('productsGrid');
+            grid.classList.toggle('grid-cols-2');
+            grid.classList.toggle('grid-cols-1');
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
